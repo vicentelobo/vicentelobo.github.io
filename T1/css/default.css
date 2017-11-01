@@ -8,6 +8,11 @@
 	white-space: nowrap;
 }
 
+.col-centered{
+    float: none;
+    margin: 0 auto;
+}
+
 .cell {
 	display: inline;
 	padding: 0.375rem 0.75rem;
@@ -46,8 +51,9 @@
 	width: 60px;
 }
 
-.btn-invisible {
-	background: transparent;
-    border: none !important;
-    font-size:0;
+.sol {
+    font-weight: 700;
+	font-family: 'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 1.17em;
+	color: red;
 }
