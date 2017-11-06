@@ -15,6 +15,7 @@ $(document).ready(function() {
 	var folga = [];
 	var tipoProblema;
 	var sainte, entrante, fimSimplex;
+	var listaBases = [];
 
 	$div_f = $('#func');
 	$div_m = $('#matriz');
@@ -24,19 +25,69 @@ $(document).ready(function() {
 
 	atualiza();
 
-	$('#numVar, #numRest').on('change click', function() {
+	var numVarAntigo;
+	var numRestAntigo;
+	var funcao = [];
+	var sinal = [];
+
+	$('#numVar, #numRest').on('click', function() {
+		numVarAntigo = 0
+		numRestAntigo = 0;
+		salvaCampos(funcao);
 		atualiza();
-		desenhaSistema();
+		preencheCampos();
 	});
+
+function salvaCampos() {
+	funcao = [];
+	matrizIni = [];
+	b = [];
+	sinal = [];
+
+	for(var i = 0; i < numRest; i++) {
+		b[i] = parseFloat($('#matriz').find('div').eq(i).find('input').last().val());
+		matrizIni[i] = [];
+
+		for(var j = 0; j < numVar+1; j++)
+			if(j < numVar) {
+				funcao.push($('#func').find('input').eq(j).val());
+				matrizIni[i].push($('#matriz').find('div').eq(i).find('input').eq(j).val());
+			}
+			else {
+				sinal.push($('#signal'+i).prop('selectedIndex'));
+		}
+	}
+}
 
 
 function atualiza() {
+	numVarAntigo = numVar;
+	numRestAntigo = numRest;
 
 	numVar = parseInt($('#numVar').val(), 10);
 	numRest = parseInt($('#numRest').val(), 10);
 
 	escreveFuncao();
 	desenhaSistema();
+}
+
+function preencheCampos() {
+	console.log(b);
+	for(var i = 0; i < numRestAntigo; i++) {
+		console.log(b[i]);
+		$('#matriz').find('div').eq(i).find('input').last().val(b[i] == 0 ? "" : b[i]);
+
+		for(var j = 0; j < numVarAntigo+1; j++) {
+			if(j < numVarAntigo) {
+				$('#func').find('input').eq(j).val(funcao[j] == 0 ? "" : funcao[j]);
+				$('#matriz').find('div').eq(i).find('input').eq(j).val(matrizIni[i][j] == 0 ? "" : matrizIni[i][j]);
+			}
+			else {
+				$('#signal'+i+' option:eq('+sinal[i]+')').prop('selected', true);
+				$('#signal'+i).change();
+			}
+		}
+	}
 }
 
 function escreveFuncao() {
@@ -68,16 +119,14 @@ function desenhaSistema(){
 	}
 	$last_row = $('<div class="col-sm-12"><strong>x</strong> &ge; 0</div>');
 	$div_m.append($last_row);
-
 }
 
 function formaPadrao() {
-
-	//corrigeB();
 	preencheZero();
 
 	matrizIni = [];
 	signal = [];
+	b = [];
 
 	for(var i = 0; i < numRest; i++) {
 		matrizIni[i] = [];
@@ -181,6 +230,8 @@ function formaPadrao() {
 				matrizIni[i][j+1] = b[i]
 		}
 	}
+
+	adicionaListaBases(base);
 }
 
 function calculaCustoReduzido() {
@@ -221,68 +272,72 @@ function pivotamento(entrante, sainte) {
 	}
 }
 
-function calculaSolucao() {
-	var z = 0;
-	for(var i = 0; i < numVar; i++) {
-		base.indexOf(i) >= 0 ? solucao[i] = b[base.indexOf(i)] : solucao[i] = 0
-		z += solucao[i]*custos[i];
-	};
-
-	return z;
+Array.prototype.containsArray = function(val) {
+    var hash = {};
+    for(var i=0; i<this.length; i++) {
+        hash[this[i]] = i;
+    }
+    return hash.hasOwnProperty(val);
 }
 
-function calculaFolga() {
-	for(var j = numVar; j < numVarPadrao; j++) {
-		if(base.indexOf(j) >= 0) {
-			var vet = [];
-			vet.push(j);
-			vet.push(b[base.indexOf(j)]);
-			for(var i = 0; i < numRest; i++) {
-				if(matrizIni[i][j] != 0)
-					vet.push(i);
-			}
-			folga.push(vet);
-		}
+function adicionaListaBases(base) {
+	var vet = base.slice();
+	listaBases.push(vet);
+}
+
+function selecaoLexicografica(sainte1, sainte2) {
+	var pivo1 = matriz[sainte1][entrante];
+	var pivo2 = matriz[sainte2][entrante];
+
+	for(var i = 0; i < numVarPadrao; i++) {
+		var num1 = Math.abs(matriz[sainte1][i]/pivo1);
+		var num2 = Math.abs(matriz[sainte2][i]/pivo2);
+		if(num1 < num2)
+			return sainte1;
+		if(num1 > num2)
+			return sainte2;
 	}
+	return sainte1;
 }
 
 function simplex() {
 	fimSimplex = false;
 	formaPadrao();
-	calculaSolucao();
 	var tipoFim;
+	var contador = 0;
 	
 	while(!fimSimplex) {
 		calculaSolucao();
-		entrante = calculaCustoReduzido();
+
+		entrante = calculaCustoReduzido(base);
 		bsobrea = bsobreaf(entrante);
 
 		if(entrante < 0)
 			break;
 
-		if(entrante < 0) {
-			fimSimplex = true;
-			break;
-		}
-
 		sainte = Math.min.apply(null, bsobrea.filter(function(x) {
 			return x > 0;
 		}));
 
-		if(!isFinite(sainte)) {
-			fimSimplex = true;
+		if(!isFinite(sainte))
+			sainte = Math.min.apply(null, bsobrea.filter(function(x) {
+			return x >= 0;
+			}));
+
+		if(!isFinite(sainte))
+			break;	
+
+		var sainte1 = bsobrea.indexOf(sainte);
+		var sainte2 = bsobrea.lastIndexOf(sainte);
+
+		sainte1 == sainte2 ? sainte = sainte1
+						   : sainte = selecaoLexicografica(sainte1, sainte2)
+
+		if(sainte < 0)
 			break;
-		}
-
-		sainte = bsobrea.indexOf(sainte);
-
-		if(sainte < 0) {
-			fimSimplex = true;
-			break;
-		}
-
 
 		mostrartabela();
+
 		base[sainte] = entrante;
 
 		pivotamento(entrante, sainte);
@@ -309,6 +364,31 @@ function simplex() {
 				}
 			tipoFim = 3; // conjunto ilimitado
 			return tipoFim;
+	}
+}
+
+function calculaSolucao() {
+	var z = 0;
+	for(var i = 0; i < numVar; i++) {
+		base.indexOf(i) >= 0 ? solucao[i] = b[base.indexOf(i)] : solucao[i] = 0
+		z += solucao[i]*custos[i];
+	};
+
+	return z;
+}
+
+function calculaFolga() {
+	for(var j = numVar; j < numVarPadrao; j++) {
+		if(base.indexOf(j) >= 0 && b[base.indexOf(j)] > 0) {
+			var vet = [];
+			vet.push(j);
+			vet.push(b[base.indexOf(j)]);
+			for(var i = 0; i < numRest; i++) {
+				if(matrizIni[i][j] != 0)
+					vet.push(i);
+			}
+			folga.push(vet);
+		}
 	}
 }
 
@@ -355,30 +435,13 @@ function mostrartabela() {
 	$row3 = $('<tr><td></td><td><strong>c<sub>r</sub></strong></td></tr>')
 	for(var i = 0; i < numVarPadrao; i++)
 		$row3.append('<td>'+ print(custoReduzido[i]) +'</td>');
-	$row3.append('<td>'+calculaSolucao()+'</td><td></td>');
+	$row3.append('<td>'+print(calculaSolucao())+'</td><td></td>');
 	$table.append($row3);
 
 	$tab.append($table);
 
 	!fimSimplex ? $tab.append('Sai da base x<sub>'+(base[sainte]+1)+'</sub> e entra x<sub>'+(entrante+1)+'</sub>.')
 				: $tab.append('Fim do Simplex.');
-}
-
-function limpar() {
-	matrizIni = [];;
-	matriz = [];
-	b = [];
-	custos = [];
-	base = [];
-	custoReduzido = [];
-	bsobrea = [];
-	artificiais = [];
-	solucao = [];
-	folga = [];
-	$('#tabelas').empty();
-	$('#fp').empty();
-	$('#folgas').empty();
-	$('#solucao').empty();
 }
 
 function imprimeProblema() {
@@ -421,10 +484,10 @@ function imprimeSolucao(result) {
 			$col1 = $('<div class="col-md-6 sol">(x*)<sup>T</sup> = (</div>');
 
 			for(var i = 0; i < numVar; i++)
-				i < numVar - 1 ? $col1.append(solucao[i]+', ') : $col1.append(solucao[i]+')');
+				i < numVar - 1 ? $col1.append(print(solucao[i])+', ') : $col1.append(print(solucao[i])+')');
 			$row.append($col1);
 
-			$col2 = $('<div class="col-md-6 sol">z* = '+calculaSolucao()*tipoProblema+'</div>');
+			$col2 = $('<div class="col-md-6 sol">z* = '+print(calculaSolucao()*tipoProblema)+'</div>');
 			$row.append($col2);
 			$('#solucao').append($row);
 
@@ -434,7 +497,7 @@ function imprimeSolucao(result) {
 				$('#solucao').append('<br><div class="row" id="folgas"></div>');
 				for(var i = 0; i < folga.length; i++) {
 					$row2 = $('<div class="col-md-12"></div>');
-					$row2.append('Folga de r<sub>'+(folga[i][2] + 1)+'</sub>: x<sub>'+(folga[i][0]+1)+'</sub> = '+folga[i][1]);
+					$row2.append('Folga de r<sub>'+(folga[i][2] + 1)+'</sub>: x<sub>'+(folga[i][0]+1)+'</sub> = '+print(folga[i][1]));
 					$('#solucao').append($row2);
 				}
 			}
@@ -447,6 +510,24 @@ function imprimeSolucao(result) {
 			$('#solucao').append('<span class="sol">O conjunto de soluções é ilimitado.</span>');
 			break;
 	}
+}
+
+function limpar() {
+	matrizIni = [];;
+	matriz = [];
+	b = [];
+	custos = [];
+	base = [];
+	custoReduzido = [];
+	bsobrea = [];
+	artificiais = [];
+	solucao = [];
+	folga = [];
+	listaBases = [];
+	$('#tabelas').empty();
+	$('#fp').empty();
+	$('#folgas').empty();
+	$('#solucao').empty();
 }
 
 $('#limpar').click(function() {
