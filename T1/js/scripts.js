@@ -30,7 +30,7 @@ $(document).ready(function() {
 	var funcao = [];
 	var sinal = [];
 
-	$('#numVar, #numRest').on('click', function() {
+	$('#numVar, #numRest').on('click change', function() {
 		numVarAntigo = 0
 		numRestAntigo = 0;
 		salvaCampos(funcao);
@@ -72,9 +72,7 @@ function atualiza() {
 }
 
 function preencheCampos() {
-	console.log(b);
 	for(var i = 0; i < numRestAntigo; i++) {
-		console.log(b[i]);
 		$('#matriz').find('div').eq(i).find('input').last().val(b[i] == 0 ? "" : b[i]);
 
 		for(var j = 0; j < numVarAntigo+1; j++) {
@@ -231,7 +229,7 @@ function formaPadrao() {
 		}
 	}
 
-	adicionaListaBases(base);
+	//adicionaListaBases(base);
 }
 
 function calculaCustoReduzido() {
@@ -297,7 +295,7 @@ function selecaoLexicografica(sainte1, sainte2) {
 		if(num1 > num2)
 			return sainte2;
 	}
-	return sainte1;
+	return sainte2;
 }
 
 function simplex() {
@@ -316,22 +314,31 @@ function simplex() {
 			break;
 
 		sainte = Math.min.apply(null, bsobrea.filter(function(x) {
-			return x > 0;
+			return x >= 0;
 		}));
 
 		if(!isFinite(sainte))
-			sainte = Math.min.apply(null, bsobrea.filter(function(x) {
-			return x >= 0;
+			break;
+
+		if(listaBases.containsArray(base)) {
+			var novoVet = bsobrea.slice();
+			novoVet.splice(bsobrea.indexOf(sainte), 1);
+			sainte = Math.min.apply(null, novoVet.filter(function(x) {
+				return x > 0;
 			}));
+			if(!isFinite(sainte))
+				break;
+			sainte = bsobrea.indexOf(sainte);
+		}
+		else {
+			adicionaListaBases(base);
+			var sainte1 = bsobrea.indexOf(sainte);
+			var sainte2 = bsobrea.lastIndexOf(sainte);
+			sainte = sainte1 == sainte2 ? sainte1 : selecaoLexicografica(sainte1, sainte2)
+		}
 
-		if(!isFinite(sainte))
-			break;	
-
-		var sainte1 = bsobrea.indexOf(sainte);
-		var sainte2 = bsobrea.lastIndexOf(sainte);
-
-		sainte1 == sainte2 ? sainte = sainte1
-						   : sainte = selecaoLexicografica(sainte1, sainte2)
+		console.log(bsobrea, sainte);
+		
 
 		if(sainte < 0)
 			break;
@@ -342,6 +349,8 @@ function simplex() {
 
 		pivotamento(entrante, sainte);
 	}
+
+	console.log(base, bsobrea, novoVet, entrante, sainte);
 
 	if(entrante < 0) {
 			fimSimplex = true;
