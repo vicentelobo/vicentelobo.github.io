@@ -330,19 +330,31 @@ function contaDecimais(value) {
   return value.toString().split(".")[1].length || 0;
 }
 
-function checaInteiro(valor) {
-	var fracao = valor > 0 ? valor - Math.floor(valor) : valor - Math.ceil(valor)
-	return Math.abs(fracao) < 1e-10
+function checaInteiro(valor, tipo) {
+	var aux = Math.abs(valor);
+	var aux1 = aux - Math.floor(aux);
+	var aux2 = Math.ceil(aux) - aux;
+	if(aux1 < 1e-10) {
+		tipo = 1;
+		return true;
+	}
+	if(aux2 < 1e-10) {
+		tipo = 2;
+		return true;
+	}
+	tipo = 0;
+	return false;
 }
 
-function print(value) {
-	if(isNaN(value))
+function print(valor) {
+	if(isNaN(valor))
 		return ' ';
-	if(!isFinite(value))
+	if(!isFinite(valor))
 		return '&infin;';
-	if(checaInteiro(value))
-		return Number.parseInt(value);
-	 return contaDecimais(value) > 3 ? value.toFixed(3) : value
+	if(checaInteiro(valor, tipo)) {
+		return Number.parseInt(tipo == 1 ? Math.floor(valor) : Math.ceil(valor)) 
+	}
+	 return contaDecimais(valor) > 3 ? valor.toFixed(3) : valor
 }
 
 function mostrartabela(custos) {
