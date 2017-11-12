@@ -1,9 +1,5 @@
 $(document).ready(function() {
 
-	$(function(){
-    	$("#mainNav").load("../navBar.html");
-	});
-
 	var numVar;
 	var numRest;
 	var numVarPadrao;
@@ -410,11 +406,18 @@ function contaDecimais(value) {
   return value.toString().split(".")[1].length || 0;
 }
 
+function checaInteiro(valor) {
+	var fracao = valor > 0 ? valor - Math.floor(valor) : valor - Math.ceil(valor)
+	return Math.abs(fracao) < 1e-10
+}
+
 function print(value) {
 	if(isNaN(value))
 		return ' ';
 	if(!isFinite(value))
 		return '&infin;';
+	if(checaInteiro(value))
+		return Number.parseInt(value);
 	 return contaDecimais(value) > 3 ? value.toFixed(3) : value
 }
 

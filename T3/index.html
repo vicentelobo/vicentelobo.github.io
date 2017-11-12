@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Algoritmo de Gomory</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../css/agency.min.css" rel="stylesheet">
+    <link href="css/default.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-shrink" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="../index.html">Pesquisa Operacional</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav text-uppercase ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#">Gomory</a>
+            </li>
+            <!-- <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="../T4/index.html">Bifurcação e Limite</a>
+            </li> -->
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top navbar-shrink" id="mainNav"></nav>
+
+    
+
+    <section class="questions" id="initialQuestions">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <h2 class="section-heading text-uppercase">Gomory</h2>
+            <h3 class="section-subheading text-muted">Algoritmo de Corte</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="col-md-12 text-center top-space" style="border-bottom: solid">
+              <h4>Controle</h4>
+            </div>
+            <div class="col-md-12">
+              
+              <div class="input-group top-space">
+                <span class="input-group-addon">N° de variáveis: </span>
+                <input type="number" id="numVar" class="form-control" min="2" max="10" value="2">
+              </div>
+              <div class="input-group top-space">
+                <span class="input-group-addon">N° de restrições: </span>
+                <input type="number" id="numRest" class="form-control" min="1" max="10" value="2">
+              </div>
+              <div class="input-group top-space">
+                <span class="input-group-addon">Tipo de problema: </span>
+                <select class="form-control" id="tipo">
+                  <option selected>Minimização</option>
+                  <option>Maximização</option>
+                </select>
+              </div>
+              <div class="input-group top-space text-center">
+                <div class="col-md-6">
+                  <button type="input" class="btn btn-primary" id="calculate">Calcular</button>
+                </div>
+                <div class="col-md-6">
+                  <button type="reset" class="btn btn-danger" id="limpar">Limpar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-8" id="dados">
+            <div class="col-md-12 text-center top-space" style="border-bottom: solid">
+              <h4>Dados</h4>
+            </div>
+            <div class="top-space text-center">
+              <h6>Função-objetivo</h6>
+            </div>
+
+            <form id="funcform" data-toggle="validator" role="form">
+              <div class="text-center matriz" id="func"></div>
+            </form>
+
+            <div class="top-space text-center">
+              <h6>Variáveis Inteiras</h6>
+              <form id="inteiras"></form>
+            </div>
+
+            <div class="top-space text-center">
+              <h6>Restrições</h6>
+            </div>
+            <form class="matriz" id="matriz"></div>
+          </div>
+        </div>
+      </div>
+      <br><br>
+      <div class="container">
+        <div class="row col-md-12 collapse text-center" id="resultado">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="col-md-12 top-space" style="border-bottom: solid">
+                <h4>Forma Padrão</h4>
+              </div>
+              <div class="col-md-12 matriz" id="fp"></div>
+              <br><br>
+            </div>
+            <div class="col-md-6">
+              <div class="col-md-12 top-space" style="border-bottom: solid">
+                <h4>Solução</h4>
+              </div>
+              <div class="col-md-12 text-center top-space" id="solucao"></div>
+              <br><br>
+            </div>
+          </div>
+          <br><br><br>
+          <div class="col-md-12 text-center top-space" style="border-bottom: solid">
+            <h4>Tabelas</h4>
+          </div>
+          <div class="col-md-12 text-center matriz" id="tabelas">
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <span class="copyright">Copyright &copy; Vicente Lobo</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+    <script src="../vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../vendor/jquery-easing/jquery.easing.min.js"></script>
+
+
+    <!-- My Scripts -->
+    <script src="js/scripts.js"></script>
+    <!-- <script src="js/validator.js"></script> -->
+  </body>
+
+</html>
