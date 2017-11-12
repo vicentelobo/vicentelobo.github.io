@@ -437,27 +437,32 @@ function gomory() {
 
 	while(novaIteracao) {
 		novaIteracao = false;
-		contador++;
 		tipoFim = simplex();
 
 		if(tipoFim != 1)
 			return tipoFim;
 
 		calculaSolucao();
+
+		// if(contador == 0)
+		// 	mostrartabela();
+
 		for(var i = 0; i < numVar; i++)
-			if(variaveisInteiras[i] && !checaInteiro(solucao[i])) {
-				adicionaLinhaFracionaria(base.indexOf(i));
+			if(!novaIteracao && variaveisInteiras[i] && !checaInteiro(solucao[i])) {
 				novaIteracao = true;
+				mostrartabela();
+				adicionaLinhaFracionaria(base.indexOf(i));
 			}
 
-		mostrartabela();
-
-		if(contador % 100 == 0) {
+		if(++contador % 100 == 0) {
 			var parar = confirm(contador+" iterações realizadas. Deseja continuar?")
 			if(parar)
 				break;
 		}
 	}
+
+	if(!novaIteracao)
+		mostrartabela();
 
 	return novaIteracao ? 0 : 1
 
