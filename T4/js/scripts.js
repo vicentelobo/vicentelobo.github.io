@@ -560,7 +560,7 @@ function branchAndBound(pai, indice, limiteInicial) {
 	var sol = calculaSolucao()*tipoProblema;
 	
 	if(sol < maiorSolucaoInteira) {
-		mostrarArvoreBL(indice, pai, 0, 222);
+		mostrarArvoreBL(indice, pai, 0, limiteInicial);
 		return -1;
 	}
 
@@ -600,7 +600,7 @@ function branchAndBound(pai, indice, limiteInicial) {
 			recuperaFP();
 			nivel--;
 
-			break;
+			//break;
 		}
 
 	if(!mudou) 
@@ -819,7 +819,7 @@ function limpar() {
 
 $('#limpar').click(function() {
 	$('#funcform, #matriz').trigger("reset");
-	//$('#resultado').collapse('hide');
+	$('#resultado').collapse('hide');
 	limpar();
 	for(var i = 0; i < numVar; i++)
 		$('#vi'+i).prop('checked', false);
