@@ -1036,6 +1036,105 @@ function imprimeQuadroFP(local, custos) {
 	$('#'+local).append($quadro);
 }
 
+// function imprimeQuadro(local, custos, valores, uivj) {
+// 	//$('#'+local).append('</div>');
+// 	$quadro = $('<table class="table" style="border-spacing: 5px; border-collapse: separate;"></table>');
+
+// 	var tamCol = 100.0 / (numDest + (uivj ? 4 : 2));
+
+// 	for(var i = 0; i < numOrig + 2; i++) {
+// 		$row = $('<tr></tr>');
+// 		for(var j = 0; j < numDest + 2; j++) {
+// 			if(i == 0) {
+// 				if(j == 0) {
+// 					$row.append('<td style="border: none"><sub>O</sub>&nbsp;&nbsp<sup>D</sup></td>');
+// 				}
+// 				else {
+// 					if(j < numDest + 1) {
+// 						if(!(ficticio < 0 && j == -ficticio)) {
+// 							$row.append('<td style="background-color: #FFF8DC;" class="quadro" >'+j+'</td>');
+// 						}
+// 						else {
+// 							$row.append('<td style="background-color: #FFF8DC;" class="quadro" >F</td>');
+// 						}
+// 					}
+// 					else {
+// 						$row.append('<td style="border: none">&nbsp;</td>');
+// 						if(uivj) {
+// 							$row.append('<td style="border: none; "></td>');
+// 							$row.append('<td style="background-color: #FFF8DC;" class="quadro">u<sub>i</sub></td>');
+// 						}
+// 					}
+// 				}
+// 			}
+// 			else {
+// 				if(i < numOrig + 1) {
+// 					if(j == 0) {
+// 						if(!(ficticio > 0 && i == ficticio)) {
+// 							$row.append('<td style="background-color: #FFF8DC;" class="quadro" >'+i+'</td>');
+// 						}
+// 						else {
+// 							$row.append('<td style="background-color: #FFF8DC;" class="quadro" >F</td>');
+// 						}
+// 					}
+// 					else {
+// 						if(j < numDest + 1) {
+// 							var ciclo = custos[i-1][j-1].toString().startsWith('+') || custos[i-1][j-1].toString().startsWith('-');
+// 							if(basicas[i-1][j-1]) {
+// 								if(!ciclo) {
+// 									$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub><strong>'+print(valores[i-1][j-1])+'</strong></sub></td>');
+// 								}
+// 								else {
+// 									$row.append('<td style="background-color: #B0C4DE" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub><strong>'+print(valores[i-1][j-1])+'</strong></sub></td>');
+// 								}
+// 							}
+// 							else {
+// 								if(valores[i-1][j-1].toString() == '') {
+// 									$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub>-</sub></td>');
+// 								}
+// 								else {
+// 									if(!ciclo) {
+// 										$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub>('+print(valores[i-1][j-1])+')</sub></td>');
+// 									}
+// 									else {
+// 										$row.append('<td style="background-color: #B0C4DE" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub>('+print(valores[i-1][j-1])+')</sub></td>');
+// 									}
+// 								}
+// 							}
+// 						}
+// 						else {
+// 							$row.append('<td style="background-color: #FFF8DC" class="quadro">'+print(qtdOrig[i-1])+'</td>');
+// 							if(uivj) {
+// 								$row.append('<td style="border: none; ">&nbsp;</td>');
+// 								$row.append('<td style="" class="quadro">'+print(ui[i-1])+'</td>');
+// 							}
+// 						}
+// 					}
+// 				}
+// 				else {
+// 					if(j > 0 && j < numDest + 1) {
+// 						$row.append('<td style="background-color: #FFF8DC" class="quadro">'+print(qtdDest[j-1])+'</td>');
+// 					}
+// 					else {
+// 						$row.append('<td style="border: none"></td>');
+// 					}
+// 				}
+// 			}
+// 		}
+// 		$quadro.append($row);
+// 	}
+// 	if(uivj) {
+// 		$quadro.append('<tr><td style="border: none; ">&nbsp;</td></tr>');
+// 		$row = $('<tr></tr>');
+// 		$row.append('<td style="background-color: #FFF8DC" class="quadro">v<sub>j</sub></td></tr>');
+// 		for(var j = 0; j < numDest; j++)
+// 			$row.append('<td style="" class="quadro">'+print(vj[j])+'</td>');
+// 		$quadro.append($row);
+// 	}
+
+// 	$('#'+local).append($quadro);
+// }
+
 function imprimeQuadro(local, custos, valores, uivj) {
 	//$('#'+local).append('</div>');
 	$quadro = $('<table class="table" style="border-spacing: 5px; border-collapse: separate;"></table>');
@@ -1085,7 +1184,7 @@ function imprimeQuadro(local, custos, valores, uivj) {
 									$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub><strong>'+print(valores[i-1][j-1])+'</strong></sub></td>');
 								}
 								else {
-									$row.append('<td style="background-color: #B0C4DE" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub><strong>'+print(valores[i-1][j-1])+'</strong></sub></td>');
+									$row.append('<td style="background-color: #B0C4DE;" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub><strong>'+print(valores[i-1][j-1])+'</strong></sub></td>');
 								}
 							}
 							else {
@@ -1094,10 +1193,10 @@ function imprimeQuadro(local, custos, valores, uivj) {
 								}
 								else {
 									if(!ciclo) {
-										$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub>('+print(valores[i-1][j-1])+')</sub></td>');
+										$row.append('<td style="" class="quadro"><sup>'+print(custos[i-1][j-1])+'</sup>&frasl;<sub style="color: #FF6B24">('+print(valores[i-1][j-1])+')</sub></td>');
 									}
 									else {
-										$row.append('<td style="background-color: #B0C4DE" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub>('+print(valores[i-1][j-1])+')</sub></td>');
+										$row.append('<td style="background-color: #B0C4DE; color: white" class="quadro"><strong class="pull-left">'+custos[i-1][j-1].substring(0,1)+'</strong>&nbsp;<sup>'+print(custos[i-1][j-1].substring(2))+'</sup>&frasl;<sub>('+print(valores[i-1][j-1])+')</sub></td>');
 									}
 								}
 							}
